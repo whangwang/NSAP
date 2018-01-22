@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>NSAP</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/public/team.css">
+    <script src="/public/team.js"></script>
+    <style>
+    .bg{
+      position: absolute;
+      background: url("<%= team_logo %>") center center/100% no-repeat;
+      opacity: 0.2;
+      width: 100%;
+      height: 250px;
+      z-index: 1;
+    }
+    .result-group{
+      display: none;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid loader">
+      <img style="margin-top: calc( 50vh - 105px )" src="/public/SVG-Loaders-master/svg-loaders/bars.svg" />
+      <h3 style="line-height: 70px;">Loading...</h3>
+    </div>
+    <div class="container panel">
+      <div class="info-panel">
+        <div class="bg"></div>
+        <h3 class="jersey">#<%= team[0].jersey %></h3>
+        <div class="info-panel-content">
+          <div class="nameArea">
+            <font class="Name pname"><%= team[0].firstName %><br><font class="lastName"><%= team[0].lastName %></font></font>
+          </div>
+          <img class="player-photo" src="https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/<%= team[0].teamId %>/2017/260x190/<%= team[0].personId %>.png" />
+          <div class="stats-group">
+            <font class="Name pos">Position<br><font class="lastName"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name played">Played<br><font class="lastName"><%= parseInt(team[0].yearsPro)+1 %>y</font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name height">Height<br><font class="lastName"><%= team[0].heightFeet %>'<%= team[0].heightInches %>''</font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name weight">Weight<br><font class="lastName"><%= team[0].weightKilograms %>Kg</font></font>
+          </div>
+          <div class="stats-group" style="float: none;">
+            <%
+            var bd = new Date(team[0].dateOfBirthUTC);
+            var ageDifMs = Date.now() - bd.getTime();
+            var ageDate = new Date(ageDifMs); // miliseconds from epoch
+            age = Math.abs(ageDate.getUTCFullYear() - 1970);
+            %>
+            <font class="Name age">Age<br><font class="lastName"><%= age %></font></font>
+          </div>
+          <div class="stats-group result-group">
+            <font class="Name ">Hall Of Fame<br><font class="lastName hof" style="color:#00FF1E;">39%</font></font>
+          </div>
+          <div class="stats-group result-group">
+            <font class="Name ">First Team<br><font class="lastName ft" style="color:#00FF1E;">28%</font></font>
+          </div>
+          <div class="stats-group result-group">
+            <font class="Name ">Defense Team<br><font class="lastName dt" style="color:#00FF1E;">21%</font></font>
+          </div>
+          <button class="calc_result" firstname="<%= team[0].firstName %>" lastname="<%= team[0].lastName %>">Caculate</button>
+        </div>
+      </div>
+      <div class="player_parent" style="">
+        <div class="player_head">
+          <table class="player_table">
+            <tr>
+              <td class="team-banner center" colspan="7" style="background-color: <%= team_color %>;"><%= team_name %></td>
+            </tr>
+            <tr class="no-light">
+              <th class="center" style="width: 5%;">#</th>
+              <th style="width: 40%;">First Name</th>
+              <th style="width: 15%;">Position</th>
+              <th style="width: 10%;">Height</th>
+              <th style="width: 10%;">Weight</th>
+              <th style="width: 10%;">Age</th>
+              <th style="width: 10%;">Played</th>
+            </tr>
+          </table>
+        </div>
+        <div class="player_list">
+          <table class="player_table">
+            <tr>
+              <td colspan="7"><%= team_name %></td>
+            </tr>
+            <%
+              for( var i = 0; i < team.length; i++){
+                var bd = new Date(team[i].dateOfBirthUTC);
+                var ageDifMs = Date.now() - bd.getTime();
+                var ageDate = new Date(ageDifMs); // miliseconds from epoch
+                age = Math.abs(ageDate.getUTCFullYear() - 1970);
+                %>
+                <tr class="<% if(i==0){ %>select<% } %> clickable" hof="-1" ft="-1" dt="-1" pid="<%= team[i].personId %>" index="<%= i %>" jersey="<%= team[i].jersey %>" played="<%= parseInt(team[i].yearsPro)+1 %>y" age="<%= age %>" weight="<%= team[i].weightKilograms %>Kg" height="<%= team[i].heightFeet %>'<%= team[i].heightInches %>''" pos="<%= team[i].pos %>" firstname="<%= team[i].firstName %>" lastname="<%= team[i].lastName %>">
+                  <td class="center" style="width: 5%;"><%= team[i].jersey %></td>
+                  <td style="width: 40%;"><%= team[i].firstName %> <%= team[i].lastName %></td>
+                  <td style="width: 15%;"><%= team[i].pos %></td>
+                  <td style="width: 10%;"><%= team[i].heightFeet %>'<%= team[i].heightInches %>''</td>
+                  <td style="width: 10%;"><%= team[i].weightKilograms %>Kg</td>
+                  <td style="width: 10%;"><%= age %></td>
+                  <td style="width: 10%;"><%= parseInt(team[i].yearsPro)+1 %>y</td>
+                </tr>
+                <%
+              }
+            %>
+          </table>
+        </div>
+      </div>
+      <div class="result_panel" style="display: none;">
+        <div style="margin-top: 20px;">
+          <a href="javascript: back();" style="font-size: 20px;color: black;margin-left:60px;padding-top: 20px;"><span class="glyphicon glyphicon-arrow-left"></span> Back</a>
+        </div>
+        <div class="">
+          <div class="stats-group">
+            <font class="Name ptsper" style="color: gray;">PTS(per)<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name pts" style="color: gray;">PTS<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name ws" style="color: gray;">WS<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name dws" style="color: gray;">DWS<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name per" style="color: gray;">PER<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name bpm" style="color: gray;">BPM<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name dbpm" style="color: gray;">DBPM<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name gp" style="color: gray;">GP<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name mp" style="color: gray;">MP<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name stlp" style="color: gray;">STL%<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name stl" style="color: gray;">STL<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name blkp" style="color: gray;">BLK%<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name blk" style="color: gray;">BLK<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name trb" style="color: gray;">TRB<br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+          <div class="stats-group" style="float: none; transform: translate(0,18px);">
+            <font class="Name ast" style="color: gray;">AST<font style="opacity: 0;">-</font><br><font class="lastName" style="color:black;"><%= team[0].pos %></font></font>
+          </div>
+        </div>
+        <br>
+        <div class="result_area" style="margin-top: 20px;margin-top: 20px;float: right;margin-right: 60px;">
+          <div class="stats-group">
+            <font class="Name" style="color: gray;">Hall Of Fame<br><font class="lastName hof" style="color:green;">39%</font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name" style="color: gray;">First Team<br><font class="lastName ft" style="color:green;">28%</font></font>
+          </div>
+          <div class="stats-group">
+            <font class="Name" style="color: gray;">Defense Team<br><font class="lastName dt" style="color:green;">21%</font></font>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </body>
+  <script>
+    function back(){
+      $('.player_parent').show();
+      $('.result_panel').hide();
+    }
+    $(document).ready(function(){
+      $('.player_list').scroll(function(){
+        if($('.player_list').scrollTop()>0){
+          $('.player_head').addClass('player_shadow');
+        }else{
+          $('.player_head').removeClass('player_shadow');
+        }
+      });
+      $('body').on('click','.calc_result',function(){
+        var data={
+          "pname": $(this).attr('firstname')+" "+$(this).attr('lastname'),
+          "played": parseInt(10)
+        }
+        $('.loader').fadeIn();
+        $('.panel').addClass('blur');
+        $.ajax('/ajax_get_per', {
+                 type: 'POST',
+                 data: JSON.stringify(data),
+                 contentType: 'application/json',
+                 success: function(rtn) {
+                   console.log(rtn);
+                   $('.player_parent').hide();
+                   $('.result_panel').show();
+                   $('.ptsper').html('PTS(per)<br><font class="lastName" style="color:black;">'+rtn.Pts+'</font>');
+                   $('.pts').html('PTS<br><font class="lastName" style="color:black;">'+rtn.PTS+'</font>');
+                   $('.ws').html('WS<br><font class="lastName" style="color:black;">'+rtn.WS+'</font>');
+                   $('.dws').html('DWS<br><font class="lastName" style="color:black;">'+rtn.DWS+'</font>');
+                   $('.per').html('PER<br><font class="lastName" style="color:black;">'+rtn.PER+'</font>');
+                   $('.bpm').html('BPM<br><font class="lastName" style="color:black;">'+rtn.BPM+'</font>');
+                   $('.dbpm').html('DBPM<br><font class="lastName" style="color:black;">'+rtn.DBPM+'</font>');
+                   $('.gp').html('GP<br><font class="lastName" style="color:black;">'+rtn.GP+'</font>');
+                   $('.mp').html('MP<br><font class="lastName" style="color:black;">'+rtn.MP+'</font>');
+                   $('.stlp').html('STL%<br><font class="lastName" style="color:black;">'+rtn.STLp+'</font>');
+                   $('.stl').html('STL<br><font class="lastName" style="color:black;">'+rtn.STL+'</font>');
+                   $('.blkp').html('BLK%<br><font class="lastName" style="color:black;">'+rtn.BLKp+'</font>');
+                   $('.blk').html('BLK<br><font class="lastName" style="color:black;">'+rtn.BLK+'</font>');
+                   $('.trb').html('TRB<br><font class="lastName" style="color:black;">'+rtn.TRB+'</font>');
+                   $('.ast').html('AST<font style="opacity: 0;">-</font><br><font class="lastName" style="color:black;">'+rtn.AST+'</font>');
+                   $('.hof').html(String(rtn.HoF)+"%");
+                   $('.ft').html(String(rtn.First)+"%");
+                   $('.dt').html(String(rtn.Defense)+"%");
+                   $('.result-group').show();
+                   $('.calc_result').hide();
+                   $('.select').attr('hof',String(rtn.HoF)+"%");
+                   $('.select').attr('ft',String(rtn.First)+"%");
+                   $('.select').attr('dt',String(rtn.Defense)+"%");
+                   $('.loader').fadeOut();
+                   $('.panel').removeClass('blur');
+                 },
+                 error  : function() {
+                   $('.loader').hide();
+                   $('.panel').removeClass('blur');
+                   console.log('error');
+                 }
+        });
+      });
+      $('body').on('click','tr.clickable',function(){
+        $('tr.select').removeClass('select');
+        $(this).addClass('select');
+        $('.jersey').html('#'+$(this).attr('jersey'));
+        $('.pname').html($(this).attr('firstname')+'<br><font class="lastName">'+$(this).attr('lastname')+'</font>');
+        $('.player-photo').attr('src','https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/<%= team[0].teamId %>/2017/260x190/'+$(this).attr('pid')+'.png');
+        $('.Name.pos').html('Position<br><font class="lastName">'+$(this).attr('pos')+'</font>');
+        $('.Name.played').html('Played<br><font class="lastName">'+$(this).attr('played')+'</font>');
+        $('.Name.height').html('Height<br><font class="lastName">'+$(this).attr('height')+'</font>');
+        $('.Name.weight').html('Weight<br><font class="lastName">'+$(this).attr('weight')+'</font>');
+        $('.Name.age').html('Age<br><font class="lastName">'+$(this).attr('age')+'</font>');
+        $('.calc_result').attr('firstname',$(this).attr('firstname'));
+        $('.calc_result').attr('lastname',$(this).attr('lastname'));
+        $('.calc_result').attr('played',$(this).attr('played'));
+        if(parseInt($(this).attr('hof'))==-1){
+          $('.result-group').hide();
+          $('.calc_result').show();
+        }else{
+          $('.select').attr('hof',$(this).attr('hof'));
+          $('.select').attr('ft',$(this).attr('ft'));
+          $('.select').attr('dt',$(this).attr('dt'));
+          $('.result-group').show();
+          $('.calc_result').hide();
+        }
+      });
+    });
+  </script>
+</html>
